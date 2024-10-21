@@ -21,12 +21,15 @@ My approach can be split into a few simple steps:
 # Getting a UART shell read access
 
 At the beginning, I wanted to try the most basic technique of getting the shell on the device - by attaching to the UART port on the board. On the Eero board, the UART port is located next to the Flash chip. 
+
 ![](/assets/img/eero/image0.png)
 
 Its TX, RX, and GND pins look as follows:
+
 ![](/assets/img/eero/image1.png)
 
 I've soldered 3 cables into the board and connected it to my UART-USB reader. When attaching it to the terminal, I only got read access to the bootloader logs:
+
 ![](/assets/img/eero/image2.png)
 
 The logging always stopped after displaying the `Starting kernel ...` message and I couldn't interrupt the booting process because the time to stop the autoboot was set to 0 seconds.
@@ -36,9 +39,11 @@ The logging always stopped after displaying the `Starting kernel ...` message an
 At this point, I've decided I need to read and overwrite the SPI Flash content to increase the autoboot interruption time. I've desoldered the chip and spent a lot of time trying to read its content with my Bus Pirate v3 board. Unfortunately for unknown reasons, it couldn't read the content.
 
 I then attempted to read it using the Flipper Zero tool and its [SPI Mem Manager](https://lab.flipper.net/apps/spi_mem_manager) application. It turned out extremely easy to use with guidance on how to connect each pin. 
+
 ![](/assets/img/eero/image3.png)
 
 After connecting pins, it automatically recognized the model of the SPI chip and read its content.
+
 ![](/assets/img/eero/image4.png)
 
 ### Changing boot arguments in the flash dump
@@ -63,6 +68,7 @@ DESCRIPTION     HEXADECIMAL     DESCRIPTION
 ```
 
 The most important for me was finding a place where boot arguments are stored to change the `bootdelay` value from `0` to any higher value. I've opened the file in the hex editor and quickly searched for the arguments. It found two identical instances of boot arguments:
+
 ![](/assets/img/eero/image5.png)
 
 The arguments are doubled for backup purposes. If there is any issue in the first copy of the arguments, they are replaced with the second one. 
@@ -123,9 +129,11 @@ $ saveenv
 ```
 
 After saving the changes using the `saveenv` command and restarting the device, I successfully got my first root shell.
+
 ![](/assets/img/eero/image6.png)
 
 There was a tiny issue with the shell I've got - it ran just before the `systemd` started every important process in the system so I couldn't check what binaries are listening on ports and what arguments are used when starting them.
+
 ![](/assets/img/eero/image7.png)
 
 I figured I needed to add a reverse shell to the startup process itself. To do so, I've created two files:
@@ -172,6 +180,7 @@ $ /usr/sbin/update-rc.d s99backdoor defaults
 ```
 
 After restarting the system and starting a listener on my machine with address `192.168.4.21`, I got a reverse shell with root privileges with all the processes properly started.
+
 
 ![](/assets/img/eero/image8.pn---
 

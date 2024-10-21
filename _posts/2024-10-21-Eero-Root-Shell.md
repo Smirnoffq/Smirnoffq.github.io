@@ -182,7 +182,7 @@ $ /usr/sbin/update-rc.d s99backdoor defaults
 After restarting the system and starting a listener on my machine with address `192.168.4.21`, I got a reverse shell with root privileges with all the processes properly started.
 
 
-![](/assets/img/eero/image8.pn---
+![](/assets/img/eero/image8.png)
 
 # Final thoughts
 

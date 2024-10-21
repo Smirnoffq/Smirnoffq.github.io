@@ -97,7 +97,7 @@ for i in range(0x0, 0x720000, 0x5111):
 ```
 
 The script took a few hours to finish. Unfortunately only after I've done it, I understood my mistake. The data on disk is fragmented and one part of a file may lay in a different block of the disk than the second part. I ended up with a dump of useless junk.
-```
+```bash
 $ binwalk dump.bin
 [...]
 3144050055 0xBB666587 merypt 2.2 encrypted data, algorithm: blowfish-448, mode: CBC, keymode: Sbit
@@ -174,7 +174,7 @@ exit $?
 ```
 
 I enabled the backdoor script to run when the system boots using the `update-rc.d` tool:
-```
+```bash
 $ chmod +x /var/backdoor
 $ /usr/sbin/update-rc.d s99backdoor defaults
 ```
